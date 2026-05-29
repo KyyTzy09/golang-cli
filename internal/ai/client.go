@@ -3,6 +3,7 @@ package ai
 import (
 	"context"
 	"fmt"
+	"go-CLI/internal/prompt"
 
 	"google.golang.org/genai"
 )
@@ -33,18 +34,18 @@ func NewGeminiClient(apiKey string) (*GeminiClient, error) {
 	}, nil
 }
 
-func (g *GeminiClient) SendMessage(prompt string) (*string, error) {
+func (g *GeminiClient) SendMessage(msg string) (*string, error) {
 	ctx := context.Background()
-	systemInstruction := "You are a strict CLI assistant. Give direct answers or code snippets. No conversational filler, no pleasantries, no explanations unless explicitly asked."
+	systemIntruction := prompt.LoadSystemPrompt("kyy-agent-prompt")
 	resp, err := g.client.Models.GenerateContent(
 		ctx,
 		g.model,
-		genai.Text(prompt),
+		genai.Text(msg),
 		&genai.GenerateContentConfig{
 			SystemInstruction: &genai.Content{
 				Role: "system",
 				Parts: []*genai.Part{
-					{Text: systemInstruction},
+					{Text: systemIntruction},
 				},
 			},
 			MaxOutputTokens: int32(g.maxOutputTokens),
@@ -56,9 +57,12 @@ func (g *GeminiClient) SendMessage(prompt string) (*string, error) {
 		return nil, err
 	}
 
-	if len(resp.Candidates) > 0 && len(resp.Candidates[0].Content.Parts) > 0 {
-		responseText := fmt.Sprintf("%v", resp.Candidates[0].Content.Parts[0])
+	if resp == nil {
+		return nil, fmt.Errorf("Tidak ada response")
+	}
 
+	responseText := resp.Text()
+	if responseText != "" {
 		return &responseText, nil
 	}
 
