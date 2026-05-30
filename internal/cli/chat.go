@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"go-CLI/internal/ai"
+	"go-CLI/internal/prompt"
 	"os"
 	"strings"
 
@@ -44,6 +45,7 @@ var chatCmd = &cobra.Command{
 				break
 			}
 			input := scanner.Text()
+			input = prompt.OptimizePrompt(input)
 
 			// Validasi tombol keluar
 			if input == "exit" || input == "keluar" {

@@ -26,3 +26,17 @@ func OptimizePrompt(prompt string) string {
 
 	return strings.Join(filteredWords, " ")
 }
+
+func CleanCode(code string) (string, error) {
+	lines := strings.Split(code, "\n")
+
+	cleanedLines := make([]string, 0, len(lines))
+	for _, line := range lines {
+		cleanedLine := strings.TrimSpace(line)
+		if cleanedLine != "" {
+			cleanedLines = append(cleanedLines, cleanedLine)
+		}
+	}
+	
+	return strings.Join(cleanedLines, "\n"), nil
+}
