@@ -23,7 +23,7 @@ var toolsCmd = &cobra.Command{
 	Short: "Tools for AI CLI",
 	Long:  "Tools for AI CLI",
 	Run: func(cmd *cobra.Command, args []string) {
-		text := strings.Join(args , " ")
+		text := strings.Join(args, " ")
 		folderStructure, err := prompt.ScanFolderTree(".")
 		if err != nil {
 			fmt.Println(err)
@@ -50,41 +50,36 @@ var toolsCmd = &cobra.Command{
 
 		// Contoh kalau AI ngirim perintah lewat JSON:
 
-			payload := map[string]interface{}{
-				"text":             text,
-				"folder_structure": folderStructure,
-				"tools":            agentTools,
-			}
+		payload := map[string]interface{}{
+			"text":             text,
+			"folder_structure": folderStructure,
+			"tools":            agentTools,
+		}
 
-			bytesResult, err := json.Marshal(payload)
-			if err != nil {
-				fmt.Println("❌ Gagal convert ke JSON:", err)
-				return
-			}
+		bytesResult, err := json.Marshal(payload)
+		if err != nil {
+			fmt.Println("❌ Gagal convert ke JSON:", err)
+			return
+		}
 
-			jsonString := string(bytesResult)
+		jsonString := string(bytesResult)
+		prompt := strings.ReplaceAll(rawPrompt, "{{payload_json}}", jsonString)
 
-			prompt := strings.ReplaceAll(rawPrompt, "{{payload_json}}", jsonString)
+		aiResponse, err := aiClient.SendMessage(prompt)
+		if err != nil {
+			fmt.Printf("❌ Gagal terhubung: %v\n", err)
+			os.Exit(1)
+		}
 
-			aiResponse, err := aiClient.SendMessage(prompt)
-			if err != nil {
-				fmt.Printf("❌ Gagal terhubung: %v\n", err)
-				os.Exit(1)
-			}
+		// Panggil tool sesuai perintah AI
+		var jsonResponse structs.AIToolsResponse
+		err = json.Unmarshal([]byte(*aiResponse), &jsonResponse)
+		if err != nil {
+			fmt.Println("❌ Gagal convert ke JSON:", err)
+			return
+		}
 
-			// Panggil tool sesuai perintah AI
-			fmt.Println("ai response: ", *aiResponse )
-			var jsonResponse structs.AIToolsResponse
-			err = json.Unmarshal([]byte(*aiResponse), &jsonResponse)
-			if err != nil {
-				fmt.Println("❌ Gagal convert ke JSON:", err)
-				return
-			}
-
-			if tool, ok := agentTools[jsonResponse.ToolName]; ok {
-				tool.Func(jsonResponse.Params)
-			}
-
-			fmt.Println(jsonResponse.Suggestion)
+		tools.RunTools(jsonResponse.ToolName, jsonResponse.Params)
+		fmt.Println(jsonResponse.Suggestion)
 	},
 }

@@ -18,5 +18,6 @@ func ScanFileContent(args map[string]string) (any, error) {
 		return "", fmt.Errorf("terminal di '%s' tidak menemukan file '%s' (%w)", wd, filePath, err)
 	}
 
+	fmt.Printf("isi file '%s':\n%s\n", filePath, data)
 	return string(data), nil
 }
