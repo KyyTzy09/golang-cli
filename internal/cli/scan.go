@@ -4,17 +4,15 @@ import (
 	"fmt"
 	"go-CLI/internal/ai"
 	"go-CLI/internal/prompt"
+	"go-CLI/internal/tools"
 	"os"
-	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-var path string = "."
 func init() {
 	RootCmd.AddCommand(scanCmd)
-	scanCmd.Flags().StringVarP(&path, "path", "p", "", "Root folder")
 }
 
 var scanCmd = &cobra.Command{
@@ -30,7 +28,6 @@ var scanCmd = &cobra.Command{
 		}
 
 		// Inisialisasi AI Client
-		fmt.Println("AI Sedang berpikir")
 
 		aiClient, err := ai.NewGeminiClient(apiKey)
 		if err != nil {
@@ -38,14 +35,16 @@ var scanCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		input := strings.Join(args, " ")
-		raw, err := prompt.ScanFileContent(path)
+		input := args[1]
+		path := args[0]
+		
+		raw, err := tools.ScanFileContent(map[string]string{"path": path})
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
 
-		scanned, err := prompt.CleanCode(raw)
+		scanned, err := prompt.CleanCode(raw.(string))
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -53,6 +52,7 @@ var scanCmd = &cobra.Command{
 
 		finalPrompt := fmt.Sprintf("%s\n\n%s", input, scanned)
 
+		fmt.Println("AI Sedang berpikir")
 		response, err := aiClient.SendMessage(finalPrompt)
 		if err != nil {
 			fmt.Printf("❌ Gagal terhubung: %v\n", err)

@@ -3,7 +3,6 @@ package prompt
 import (
 	"fmt"
 	"io/fs"
-	"os"
 	"path/filepath"
 	"strings"
 )
@@ -64,14 +63,3 @@ func ScanFolderTree(rootPath string ) (string, error) {
 	return result.String(), nil
 }
 
-func ScanFileContent(filePath string) (string, error) {
-	wd, _ := os.Getwd()
-
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		// Kita perjelas error-nya biar ketahuan nyari ke mana
-		return "", fmt.Errorf("terminal di '%s' gak bisa nemu file '%s' (%w)", wd, filePath, err)
-	}
-
-	return string(data), nil
-}
