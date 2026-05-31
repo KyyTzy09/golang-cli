@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"go-CLI/internal/ai"
+	"go-CLI/internal/helpers"
 	"go-CLI/internal/prompt"
+
 	"go-CLI/internal/structs"
 	"go-CLI/internal/tools"
 	"os"
@@ -62,8 +64,8 @@ var toolsCmd = &cobra.Command{
 			return
 		}
 
-		jsonString := string(bytesResult)
-		prompt := strings.ReplaceAll(rawPrompt, "{{payload_json}}", jsonString)
+		payloadString := string(bytesResult)
+		prompt := strings.ReplaceAll(rawPrompt, "{{payload_json}}", payloadString)
 
 		aiResponse, err := aiClient.SendMessage(prompt)
 		if err != nil {
@@ -71,6 +73,8 @@ var toolsCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
+		// fmt.Println(*aiResponse)
+		*aiResponse = helpers.CleanJSONResponse(*aiResponse)
 		// Panggil tool sesuai perintah AI
 		var jsonResponse structs.AIToolsResponse
 		err = json.Unmarshal([]byte(*aiResponse), &jsonResponse)
