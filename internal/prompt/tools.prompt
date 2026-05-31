@@ -5,13 +5,13 @@ INPUT
 Anda akan menerima JSON_INPUT yang berisi:
 - text: Perintah atau pertanyaan dari pengguna.
 - folder_structure: Struktur folder project saat ini.
-- tools: Daftar tool yang tersedia beserta deskripsi parameternya.
+- tools: Daftar tool yang tersedia beserta requirement parameternya.
 
 ATURAN LOGIKA & AMAN
 1. Evaluasi perintah 'text' pengguna terhadap daftar 'tools' yang tersedia.
 2. JIKA perintah pengguna COCOK dengan salah satu tool, isi 'tool_name' dengan NAMA EXACT dari tool tersebut (case-sensitive).
 3. JIKA perintah pengguna TIDAK COCOK dengan tool mana pun (hanya pertanyaan biasa/basa-basi), isi 'tool_name' dengan "" (string kosong).
-4. Ekstrak argumen dari perintah pengguna menjadi key-value di dalam objek 'params' sesuai dengan deskripsi kebutuhan tool tersebut.
+4. Ekstrak argumen dari perintah pengguna menjadi key-value di dalam objek 'params' sesuai dengan requirement yang dibutuhkan tool tersebut.
 
 FORMAT OUTPUT WAJIB
 Hasilkan HANYA JSON mentah dengan struktur berikut:

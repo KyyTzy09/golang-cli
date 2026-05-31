@@ -3,9 +3,9 @@ package tools
 import "fmt"
 
 type Tool struct {
-	Name         string
-	Requirements string
-	Func         func(map[string]string) (any, error)
+	Name         string `json:"tool_name"`
+	Requirements string `json:"requirements"`
+	Func         func(map[string]string) (any, error) `json:"-"`
 }
 
 var Tools = map[string]Tool{

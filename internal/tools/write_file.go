@@ -43,6 +43,5 @@ func WriteFileContent(args map[string]string) (any, error) {
 		return nil, errors.New(msg)
 	}
 
-	fmt.Printf("💾 Sukses menjalankan tool: File berhasil ditulis di '%s'\n", path)
 	return nil, nil
 }
