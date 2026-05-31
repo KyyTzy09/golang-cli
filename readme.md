@@ -20,21 +20,25 @@ The project is organized into two main top-level directories:
 
 ```bash
 # Example: How to install your CLI tool
-go install github.com/your-username/kyy-agent-cli@latest
+go install github.com/KyyTzy09/golang-cli@latest
 ```
 
 ## Usage
 
 ```bash
 # Example: Ask a question
-kyy-agent ask "How do I compile a Go program?"
+kyy ask "How do I compile a Go program?"
 
 # Example: Start a chat session
-kyy-agent chat
+kyy chat
 
 # Example: Configure settings
-kyy-agent config set openai_api_key YOUR_API_KEY
+kyy config --gemini YOUR_API_KEY
 
 # Example: Scan a file or directory
-kyy-agent scan ./internal/cli/
+kyy scan ./internal/cli/
+
+# Example: Use tools like scan or create file
+kyy tools "Create test.txt in root project"
+
 ```
